@@ -1,0 +1,46 @@
+-- This file has been generated from package.yaml by hpack version 0.18.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           posits
+version:        0.0.1.0
+description:    Please see the README on GitHub at <https://github.com/GarkGarcia/posits#readme>
+homepage:       https://github.com/GarkGarcia/posits#readme
+bug-reports:    https://github.com/GarkGarcia/posits/issues
+author:         Gark Garcia
+maintainer:     gark.escobar@protonmail.com
+copyright:      2020 Gark Garcia
+license:        GPL-3
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+
+extra-source-files:
+    README.md
+    src/lib.o
+
+source-repository head
+  type: git
+  location: https://github.com/GarkGarcia/posits
+
+library
+  hs-source-dirs:
+      src
+  build-depends:
+      base >= 4.7 && < 5
+  exposed-modules:
+      Numeric.Posit
+  other-modules:
+      Paths_posits
+  default-language: Haskell2010
+
+test-suite posits-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >= 4.7 && < 5
+    , posits
+  default-language: Haskell2010
