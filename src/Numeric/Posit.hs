@@ -1,53 +1,55 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 
-module Numeric.Posit (Posit) where
+module Numeric.Posit (Posit32) where
 
 import Data.Int (Int32, Int64)
 import Data.Ratio (numerator, denominator)
-foreign import ccall "int_to_posit" intToPosit :: Int64 -> Int32
-foreign import ccall "posit_add" pAdd :: Int32 -> Int32 -> Int32
-foreign import ccall "posit_sub" pSub :: Int32 -> Int32 -> Int32
-foreign import ccall "posit_mul" pMul :: Int32 -> Int32 -> Int32
-foreign import ccall "posit_div" pDiv :: Int32 -> Int32 -> Int32
-foreign import ccall "posit_neg" pNeg :: Int32 -> Int32
-foreign import ccall "posit_eq" pEq :: Int32 -> Int32 -> Bool
-foreign import ccall "posit_le" pLe :: Int32 -> Int32 -> Bool
-foreign import ccall "posit_lt" pLt :: Int32 -> Int32 -> Bool
 
-newtype Posit = Posit Int32
+foreign import ccall "int_to_posit32" intToPosit32 :: Int64 -> Int32
+foreign import ccall "posit32_add" p32Add :: Int32 -> Int32 -> Int32
+foreign import ccall "posit32_sub" p32Sub :: Int32 -> Int32 -> Int32
+foreign import ccall "posit32_mul" p32Mul :: Int32 -> Int32 -> Int32
+foreign import ccall "posit32_div" p32Div :: Int32 -> Int32 -> Int32
+foreign import ccall "posit32_neg" p32Neg :: Int32 -> Int32
+foreign import ccall "posit32_eq" p32Eq :: Int32 -> Int32 -> Bool
+foreign import ccall "posit32_le" p32Le :: Int32 -> Int32 -> Bool
+foreign import ccall "posit32_lt" p32Lt :: Int32 -> Int32 -> Bool
 
-zero :: Posit
-zero = Posit 0
+newtype Posit32 = Posit32 Int32
+newtype Posit64 = Posit64 Int64
 
-instance Eq Posit where
-    (Posit a) == (Posit b) = pEq a b
+zero32 :: Posit32
+zero32 = Posit32 0
 
-instance Ord Posit where
-    (Posit a) <= (Posit b) = pLe a b
-    (Posit a) <  (Posit b) = pLt a b
+instance Eq Posit32 where
+    (Posit32 a) == (Posit32 b) = p32Eq a b
 
-instance Num Posit where
-    fromInteger = Posit . intToPosit . fromInteger 
+instance Ord Posit32 where
+    (Posit32 a) <= (Posit32 b) = p32Le a b
+    (Posit32 a) <  (Posit32 b) = p32Lt a b
 
-    (Posit a) + (Posit b) = Posit $ pAdd a b
-    (Posit a) - (Posit b) = Posit $ pSub a b
-    (Posit a) * (Posit b) = Posit $ pMul a b
+instance Num Posit32 where
+    fromInteger = Posit32 . intToPosit32 . fromInteger 
+
+    (Posit32 a) + (Posit32 b) = Posit32 $ p32Add a b
+    (Posit32 a) - (Posit32 b) = Posit32 $ p32Sub a b
+    (Posit32 a) * (Posit32 b) = Posit32 $ p32Mul a b
     
-    negate (Posit a) = Posit $ pNeg a
+    negate (Posit32 a) = Posit32 $ p32Neg a
 
-    signum p@(Posit a)
-        | a == 0 = zero 
-        | p > zero = fromInteger 1 
+    signum p@(Posit32 a)
+        | a == 0 = zero32 
+        | p > zero32 = fromInteger 1 
         | otherwise = fromInteger (-1)
 
     abs p
-        | p < zero = negate p
+        | p < zero32 = negate p
         | otherwise = p
 
-instance Fractional Posit where
-    fromRational q = Posit $ pDiv n d
-        where n = intToPosit $ fromInteger $ numerator q 
-              d = intToPosit $ fromInteger $ denominator q 
+instance Fractional Posit32 where
+    fromRational q = Posit32 $ p32Div n d
+        where n = intToPosit32 $ fromInteger $ numerator q 
+              d = intToPosit32 $ fromInteger $ denominator q 
     
-    (Posit a) / (Posit b) = Posit $ pDiv a b
+    (Posit32 a) / (Posit32 b) = Posit32 $ p32Div a b
 

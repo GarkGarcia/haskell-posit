@@ -2,45 +2,59 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define DEFINE_BIN_OP(NAME, F) \
-uint32_t NAME (uint32_t a, uint32_t b) \
+#define DEFINE_INT_TO_POSIT(N_BITS) \
+uint##N_BITS##_t int_to_posit##N_BITS (int64_t x) \
 { \
-    posit32_t pa, pb; \
-\
-    pa = castP32(a); \
-    pb = castP32(b); \
-\
-    return castUI(F (pa, pb)); \
+    return castUI(i64_to_p##N_BITS (x)); \
 }
 
-#define DEFINE_COMP_OP(NAME, F) \
-bool NAME (uint32_t a, uint32_t b) \
+#define DEFINE_BIN_OP(N_BITS, OP) \
+uint##N_BITS##_t posit##N_BITS##_##OP (uint##N_BITS##_t a, uint##N_BITS##_t b) \
 { \
-    posit32_t pa, pb; \
+    posit##N_BITS##_t pa, pb; \
 \
-    pa = castP32(a); \
-    pb = castP32(b); \
+    pa = castP##N_BITS (a); \
+    pb = castP##N_BITS (b); \
 \
-    return F (pa, pb); \
+    return castUI(p##N_BITS##_##OP (pa, pb)); \
 }
 
-uint32_t posit_neg(uint32_t a)
-{
-    posit32_t pa = castP32(a);
-    return castUI(negP32(pa));
+#define DEFINE_NEG(N_BITS) \
+uint##N_BITS##_t posit##N_BITS##neg (uint##N_BITS##_t a) \
+{ \
+    posit##N_BITS##_t pa = castP##N_BITS (a); \
+    return castUI(negP##N_BITS (pa)); \
+} 
+
+
+#define DEFINE_ARITH_OPS(N_BITS) \
+DEFINE_BIN_OP(N_BITS, add) \
+DEFINE_BIN_OP(N_BITS, sub) \
+DEFINE_BIN_OP(N_BITS, mul) \
+DEFINE_BIN_OP(N_BITS, div) \
+DEFINE_NEG(N_BITS)
+
+#define DEFINE_COMP_OP(N_BITS, OP) \
+bool posit##N_BITS##_##OP (uint##N_BITS##_t a, uint##N_BITS##_t b) \
+{ \
+    posit##N_BITS##_t pa, pb; \
+\
+    pa = castP##N_BITS (a); \
+    pb = castP##N_BITS (b); \
+\
+    return p##N_BITS##_##OP (pa, pb); \
 }
 
-uint32_t int_to_posit(int64_t x)
-{
-    return castUI(i64_to_p32(x));
-}
+#define DEFINE_COMP_OPS(N_BITS) \
+DEFINE_COMP_OP(N_BITS, eq) \
+DEFINE_COMP_OP(N_BITS, le) \
+DEFINE_COMP_OP(N_BITS, lt)
 
-DEFINE_BIN_OP(posit_add, p32_add)
-DEFINE_BIN_OP(posit_sub, p32_sub)
-DEFINE_BIN_OP(posit_mul, p32_mul)
-DEFINE_BIN_OP(posit_div, p32_div)
+#define DEFINE_ALL_OPS(N_BITS) \
+DEFINE_INT_TO_POSIT(N_BITS) \
+DEFINE_ARITH_OPS(N_BITS) \
+DEFINE_COMP_OPS(N_BITS)
 
-DEFINE_COMP_OP(posit_eq, p32_eq)
-DEFINE_COMP_OP(posit_le, p32_le)
-DEFINE_COMP_OP(posit_lt, p32_lt)
+DEFINE_ALL_OPS(16)
+DEFINE_ALL_OPS(32)
 

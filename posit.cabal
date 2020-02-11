@@ -5,8 +5,8 @@
 name:           posit
 version:        0.0.1.0
 description:    Please see the README on GitHub at <https://github.com/GarkGarcia/posit#readme>
-homepage:       https://github.com/GarkGarcia/posit#readme
-bug-reports:    https://github.com/GarkGarcia/posit/issues
+homepage:       https://github.com/GarkGarcia/haskell-posit#readme
+bug-reports:    https://github.com/GarkGarcia/haskell-posit/issues
 author:         Gark Garcia
 maintainer:     gark.escobar@protonmail.com
 copyright:      2020 Gark Garcia
