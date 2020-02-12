@@ -1,9 +1,19 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 
-module Numeric.Posit (Posit16, Posit32) where
+module Numeric.Posit (Posit8, Posit16, Posit32) where
 
-import Data.Int (Int16, Int32, Int64)
+import Data.Int (Int8, Int16, Int32, Int64)
 import Data.Ratio (numerator, denominator)
+
+foreign import ccall "int_to_posit8" intToPosit8 :: Int64 -> Int8
+foreign import ccall "posit8_add" p8Add :: Int8 -> Int8 -> Int8
+foreign import ccall "posit8_sub" p8Sub :: Int8 -> Int8 -> Int8
+foreign import ccall "posit8_mul" p8Mul :: Int8 -> Int8 -> Int8
+foreign import ccall "posit8_div" p8Div :: Int8 -> Int8 -> Int8
+foreign import ccall "posit8_neg" p8Neg :: Int8 -> Int8
+foreign import ccall "posit8_eq"  p8Eq  :: Int8 -> Int8 -> Bool
+foreign import ccall "posit8_le"  p8Le  :: Int8 -> Int8 -> Bool
+foreign import ccall "posit8_lt"  p8Lt  :: Int8 -> Int8 -> Bool
 
 foreign import ccall "int_to_posit16" intToPosit16 :: Int64 -> Int16
 foreign import ccall "posit16_add" p16Add :: Int16 -> Int16 -> Int16
@@ -25,8 +35,44 @@ foreign import ccall "posit32_eq"  p32Eq  :: Int32 -> Int32 -> Bool
 foreign import ccall "posit32_le"  p32Le  :: Int32 -> Int32 -> Bool
 foreign import ccall "posit32_lt"  p32Lt  :: Int32 -> Int32 -> Bool
 
+newtype Posit8  = Posit8  Int8
 newtype Posit16 = Posit16 Int16
 newtype Posit32 = Posit32 Int32
+
+zero8 :: Posit8
+zero8 = Posit8 0
+
+instance Eq Posit8 where
+    (Posit8 a) == (Posit8 b) = p8Eq a b
+
+instance Ord Posit8 where
+    (Posit8 a) <= (Posit8 b) = p8Le a b
+    (Posit8 a) <  (Posit8 b) = p8Lt a b
+
+instance Num Posit8 where
+    fromInteger = Posit8 . intToPosit8 . fromInteger 
+
+    (Posit8 a) + (Posit8 b) = Posit8 $ p8Add a b
+    (Posit8 a) - (Posit8 b) = Posit8 $ p8Sub a b
+    (Posit8 a) * (Posit8 b) = Posit8 $ p8Mul a b
+    
+    negate (Posit8 a) = Posit8 $ p8Neg a
+
+    signum p@(Posit8 a)
+        | a == 0 = zero8 
+        | p > zero8 = fromInteger 1 
+        | otherwise = fromInteger (-1)
+
+    abs p
+        | p < zero8 = negate p
+        | otherwise = p
+
+instance Fractional Posit8 where
+    fromRational q = Posit8 $ p8Div n d
+        where n = intToPosit8 $ fromInteger $ numerator q 
+              d = intToPosit8 $ fromInteger $ denominator q 
+    
+    (Posit8 a) / (Posit8 b) = Posit8 $ p8Div a b
 
 zero16 :: Posit16
 zero16 = Posit16 0
