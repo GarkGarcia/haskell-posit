@@ -172,6 +172,13 @@ library
     , SoftPosit/source/ui64_to_p32.c
     , SoftPosit/source/ui64_to_pX1.c
     , SoftPosit/source/ui64_to_pX2.c
+    , SoftPosit/source/8086-SSE/specialize.h
+    , SoftPosit/source/include/internals.h
+    , SoftPosit/source/include/primitives.h
+    , SoftPosit/source/include/softposit.h
+    , SoftPosit/source/include/softposit_cpp.h
+    , SoftPosit/source/include/softposit_types.h
+    , SoftPosit/build/Linux-x86_64-GCC/platform.h
   default-language: Haskell2010
 
 test-suite posit-test
