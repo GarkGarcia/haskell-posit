@@ -1,6 +1,6 @@
-import Numeric.Posit (Posit)
+import Numeric.Posit (Posit32)
 
-posit :: Integer -> Posit
+posit :: Integer -> Posit32
 posit = fromInteger
 
 main :: IO ()

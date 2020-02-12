@@ -1,7 +1,9 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 
-module Numeric.Posit (Posit8, Posit16, Posit32) where
+module Numeric.Posit (Posit, Posit8, Posit16, Posit32) where
 
+import Foreign.Storable
+import Foreign.Ptr (castPtr)
 import Data.Int (Int8, Int16, Int32, Int64)
 import Data.Ratio (numerator, denominator)
 
@@ -35,9 +37,16 @@ foreign import ccall "posit32_eq"  p32Eq  :: Int32 -> Int32 -> Bool
 foreign import ccall "posit32_le"  p32Le  :: Int32 -> Int32 -> Bool
 foreign import ccall "posit32_lt"  p32Lt  :: Int32 -> Int32 -> Bool
 
+-- | 8 bit posit numbers.
 newtype Posit8  = Posit8  Int8
+
+-- | 16 bit posit numbers.
 newtype Posit16 = Posit16 Int16
+
+-- | 32 bit posit numbers.
 newtype Posit32 = Posit32 Int32
+
+type Posit = Posit32
 
 zero8 :: Posit8
 zero8 = Posit8 0
@@ -58,10 +67,10 @@ instance Num Posit8 where
     
     negate (Posit8 a) = Posit8 $ p8Neg a
 
-    signum p@(Posit8 a)
-        | a == 0 = zero8 
-        | p > zero8 = fromInteger 1 
-        | otherwise = fromInteger (-1)
+    signum p
+        | p == zero8 = zero8 
+        | p > zero8  = fromInteger 1 
+        | otherwise  = fromInteger (-1)
 
     abs p
         | p < zero8 = negate p
@@ -73,6 +82,13 @@ instance Fractional Posit8 where
               d = intToPosit8 $ fromInteger $ denominator q 
     
     (Posit8 a) / (Posit8 b) = Posit8 $ p8Div a b
+
+instance Storable Posit8 where
+    sizeOf _ = 1
+    alignment = sizeOf
+
+    peek p = Posit8 <$> peek (castPtr p)
+    poke p (Posit8 a) = poke (castPtr p) a
 
 zero16 :: Posit16
 zero16 = Posit16 0
@@ -93,14 +109,14 @@ instance Num Posit16 where
     
     negate (Posit16 a) = Posit16 $ p16Neg a
 
-    signum p@(Posit16 a)
-        | a == 0 = zero16 
-        | p > zero16 = fromInteger 1 
-        | otherwise = fromInteger (-1)
+    signum p
+        | p == zero16 = zero16 
+        | p > zero16  = fromInteger 1 
+        | otherwise   = fromInteger (-1)
 
     abs p
         | p < zero16 = negate p
-        | otherwise = p
+        | otherwise  = p
 
 instance Fractional Posit16 where
     fromRational q = Posit16 $ p16Div n d
@@ -108,6 +124,13 @@ instance Fractional Posit16 where
               d = intToPosit16 $ fromInteger $ denominator q 
     
     (Posit16 a) / (Posit16 b) = Posit16 $ p16Div a b
+
+instance Storable Posit16 where
+    sizeOf _ = 2
+    alignment = sizeOf
+
+    peek p = Posit16 <$> peek (castPtr p)
+    poke p (Posit16 a) = poke (castPtr p) a
 
 zero32 :: Posit32
 zero32 = Posit32 0
@@ -128,10 +151,10 @@ instance Num Posit32 where
     
     negate (Posit32 a) = Posit32 $ p32Neg a
 
-    signum p@(Posit32 a)
-        | a == 0 = zero32 
-        | p > zero32 = fromInteger 1 
-        | otherwise = fromInteger (-1)
+    signum p
+        | p == zero32 = zero32 
+        | p > zero32  = fromInteger 1 
+        | otherwise   = fromInteger (-1)
 
     abs p
         | p < zero32 = negate p
@@ -143,4 +166,11 @@ instance Fractional Posit32 where
               d = intToPosit32 $ fromInteger $ denominator q 
     
     (Posit32 a) / (Posit32 b) = Posit32 $ p32Div a b
+
+instance Storable Posit32 where
+    sizeOf _ = 4
+    alignment = sizeOf
+
+    peek p = Posit32 <$> peek (castPtr p)
+    poke p (Posit32 a) = poke (castPtr p) a
 
