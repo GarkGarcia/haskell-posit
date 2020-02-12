@@ -33,8 +33,8 @@ library
   ghc-options:
       -Wall -pgmlgcc
   include-dirs:
-      ./src ./SoftPosits/source ./SoftPosits/source/include
-  c-sources: ./SoftPosits/source/p32_add.c, ./SoftPosits/source/p32_sub.c, ./SoftPosits/source/p32_mul.c, ./SoftPosits/source/p32_div.c, ./SoftPosits/source/p32_eq.c, ./SoftPosits/source/p32_le.c, ./SoftPosits/source/p32_lt.c, ./SoftPosits/source/i64_to_p32.c, src/lib.c
+      ./src ./SoftPosit/source ./SoftPosit/source/include
+  c-sources: src/lib.c
   default-language: Haskell2010
 
 test-suite posit-test
