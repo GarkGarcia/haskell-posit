@@ -2,4 +2,4 @@
 *.o
 *.a
 dist
-c-source.txt
+c-sources.txt
