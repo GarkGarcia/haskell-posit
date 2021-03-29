@@ -1,0 +1,12 @@
+Haskell bindings for the https://gitlab.com/cerlane/SoftPosit/[SoftPosit] C 
+library, providing posit arithmetic support in Haskell.
+
+WARNING: This repository was moved to https://git.escobar.life/haskell-posit/
+
+== License
+
+This bindings are licensed undender the 
+https://www.gnu.org/licenses/gpl-3.0.en.html[GNU General Public License v3]. 
+Note that the SoftPosit library is still subject to it's https://gitlab.com/cerlane/SoftPosit/-/blob/master/LICENSE[original licensing 
+terms].
+
